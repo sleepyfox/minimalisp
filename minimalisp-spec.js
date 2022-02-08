@@ -1,19 +1,13 @@
-var eval = (list) => {
-  if (list.length === 0) { // if list.empty?()
-    return(null)
-  } else {
-    return(1)
-  }
-}
+import { evaluate } from './minimalisp.js'
 
 describe('A LISP interpreter', () => {
-  it('The number one evaluates to itself', () => {
-    expect(eval([1])).toEqual(1)
-  })
-
   it('an empty list evaluates to null', () => {
     // Design: chose null to stand in for NIL
+    expect(evaluate([])).toEqual(null)
+  })
+
+  it('The number one evaluates to itself', () => {
     // Design: chose JS arrays to represent lists
-    expect(eval([])).toEqual(null)
+    expect(evaluate([1])).toEqual(1)
   })
 })
