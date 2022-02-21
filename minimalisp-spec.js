@@ -21,5 +21,13 @@ describe('A LISP interpreter', () => {
     it('parses an empty string to the empty list', () => {
       expect(parse('')).toEqual([])
     })
+
+    it('parses the string "7" to a list containing the number 7', () => {
+      expect(parse('7')).toEqual([7])
+    })
+
+    it('parses the string "-1" to a list containing the number -1', () => {
+      expect(parse('-1')).toEqual([-1])
+    })
   })
 })

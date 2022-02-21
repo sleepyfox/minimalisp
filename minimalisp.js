@@ -7,7 +7,11 @@ function evaluate(list){
 }
 
 function parse(stringExpression){
-  return([])
+  if (stringExpression === '') {
+    return([])
+  } else {
+    return([parseInt(stringExpression)])
+  }
 }
 
 export { evaluate, parse }
