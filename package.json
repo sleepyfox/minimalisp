@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "jasmine minimalisp-spec.js"
+    "test": "jasmine --random=false minimalisp-spec.js"
   },
   "repository": {
     "type": "git",
