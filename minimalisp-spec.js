@@ -1,4 +1,4 @@
-import { evaluate } from './minimalisp.js'
+import { evaluate, parse } from './minimalisp.js'
 
 describe('A LISP interpreter', () => {
   describe('with an evaluator', () => {
@@ -14,6 +14,12 @@ describe('A LISP interpreter', () => {
 
     it('it evaluates a list containing four to the number 4', () => {
       expect(evaluate([4])).toEqual(4)
+    })
+  })
+
+  describe('with a parser', () => {
+    it('parses an empty string to the empty list', () => {
+      expect(parse('')).toEqual([])
     })
   })
 })

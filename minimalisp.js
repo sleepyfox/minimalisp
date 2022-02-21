@@ -6,4 +6,8 @@ function evaluate(list){
   }
 }
 
-export { evaluate }
+function parse(stringExpression){
+  return([])
+}
+
+export { evaluate, parse }
