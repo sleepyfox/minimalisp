@@ -1,4 +1,4 @@
-import { evaluate, parse } from './minimalisp.js'
+var { evaluate, parse } = require('./minimalisp.js')
 
 describe('A LISP interpreter', () => {
   describe('with an evaluator', () => {

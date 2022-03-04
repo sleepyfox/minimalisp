@@ -14,4 +14,4 @@ function parse(stringExpression){
   }
 }
 
-export { evaluate, parse }
+module.exports = { evaluate, parse }

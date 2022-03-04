@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "A minimal LISP/Scheme for pedagogical purposes.",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "test": "jasmine --random=false minimalisp-spec.js"
   },
