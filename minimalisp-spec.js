@@ -33,5 +33,9 @@ describe('A LISP interpreter', () => {
     it('parses a string "(- 1)" into a list containing a symbol and the number one', () => {
       expect(parse('(- 1)')).toEqual(['-', 1])
     })
+
+    it('parses a string "(- 2)" into a list containing a symbol and the number two', () => {
+      expect(parse('(- 2)')).toEqual(['-', 2])
+    }) 
   })
 })

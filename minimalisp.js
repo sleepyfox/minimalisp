@@ -11,8 +11,9 @@ function parse(stringExpression){
     return([])
   } else {
     sign = stringExpression[1]
+    n = parseInt(stringExpression[3])
     if(sign === '-') {
-      return(['-', 1])
+      return(['-', n])
     } else {
       return([parseInt(stringExpression)])
     }
