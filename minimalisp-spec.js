@@ -30,6 +30,10 @@ describe('A LISP interpreter', () => {
       expect(parse('-1')).toEqual([-1])
     })
 
+    it('parses the string "\"cat\"" to a list containing a string with the word cat', () => {
+      expect(parse('"cat"')).toEqual(["cat"])
+    })
+    
     it('parses a string "(- 1)" into a list containing a symbol and the number one', () => {
       expect(parse('(- 1)')).toEqual(['-', 1])
     })
