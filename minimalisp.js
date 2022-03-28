@@ -10,7 +10,12 @@ function parse(stringExpression){
   if (stringExpression === '') {
     return([])
   } else {
-    return([parseInt(stringExpression)])
+    sign = stringExpression[1]
+    if(sign === '-') {
+      return(['-', 1])
+    } else {
+      return([parseInt(stringExpression)])
+    }
   }
 }
 
