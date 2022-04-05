@@ -12,6 +12,10 @@ Unfortunately a brief Internet search turns up nothing canonical, so I'll have t
 
 Nevertheless, LISP can be a suitably simple and manageable target language for an interpreter project. Why not a compiler, you ask? Because macros require an interpreter, so even a compiler will have to interpret.
 
+Implementations are in language-focussed folders:
+
+* [Node.js](nodejs)
+
 # License
 
 CC-BY-NC-SA 4.0 - see [LICENSE](./LICENSE) file.
