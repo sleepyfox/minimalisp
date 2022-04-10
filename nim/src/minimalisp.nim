@@ -1,10 +1,11 @@
 # Module minimalisp
+import strutils
 
 proc space_parens(s: string): string =
   s
 
 proc chunk(s: string): seq[string] =
-  newSeq[string]()
+  s.splitWhitespace()
 
 proc tokenise(chunks: seq[string]): seq[string] =
   chunks
