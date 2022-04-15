@@ -10,3 +10,5 @@ suite "A minimalisp parser":
   test "should parse 'a b' as a list of two atoms":
     check(parse("a b").len == 2)
     check(parse("a b") == ["a", "b"])
+  test "should parse an empty expression as an empty list":
+    check(parse("()") == [[]])
