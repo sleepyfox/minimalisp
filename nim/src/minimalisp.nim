@@ -26,9 +26,11 @@ proc chunk(s: string): seq[string] =
 proc tokenise(chunks: seq[string]): List =
   if chunks.len == 0:
     List(head: nil, tail: nil)
+  elif chunks.len == 1:
+    List(head: Node(kind: nString, str: chunks[0]), tail: nil)
   else:
     List(head: Node(kind: nString, str: chunks[0]),
-         tail: nil)
+         tail: tokenise(chunks[1 .. ^1]))
 
 proc parse*(s: string): List =
   # Surround parens by spaces
