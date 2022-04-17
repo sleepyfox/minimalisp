@@ -1,6 +1,7 @@
 # Module minimalisp
 import strutils
 import strformat
+import sequtils
 
 type
   List* = ref object
@@ -17,20 +18,24 @@ proc `$`[Node](n: Node): string =
   of nInt: fmt"{n.num}"
   of nString: n.str
 
-proc space_parens(s: string): string =
-  s
+proc space_parens*(s: string): string =
+  s.replace("(", " ( ").replace(")", " ) ")
 
 proc chunk(s: string): seq[string] =
   s.splitWhitespace()
 
-proc tokenise(chunks: seq[string]): List =
-  if chunks.len == 0:
+proc tokenise(chunk: string): Node =
+  Node(kind: nString, str: chunk)
+  # TODO: create other kinds of tokens e.g. ints, symbols etc.
+
+proc analyse(tokens: seq[Node]): List =
+  if tokens.len == 0:
     List(head: nil, tail: nil)
-  elif chunks.len == 1:
-    List(head: Node(kind: nString, str: chunks[0]), tail: nil)
+  elif tokens.len == 1:
+    List(head: tokens[0], tail: nil)
   else:
-    List(head: Node(kind: nString, str: chunks[0]),
-         tail: tokenise(chunks[1 .. ^1]))
+    List(head: tokens[0],
+         tail: analyse(tokens[1 .. ^1]))
 
 proc parse*(s: string): List =
   # Surround parens by spaces
@@ -38,6 +43,8 @@ proc parse*(s: string): List =
   # Split input string into chunks
   let chunks = chunk(spaced_string)
   # Turn chunks into tokens
-  let tokens = tokenise(chunks)
+  let tokens = chunks.map(tokenise)
+  # Turn list of tokens into an AST
+  let tree = analyse(tokens)
   # Return list of tokens
-  tokens
+  tree

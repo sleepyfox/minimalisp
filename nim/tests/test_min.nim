@@ -15,5 +15,9 @@ suite "A minimalisp parser":
     check(parse("a b").tail.head.str == "b")
     check(parse("a b").tail.tail.isNil)
 
+  test "parens should be surrounded by spaces":
+    check(space_parens("(") == " ( ")
+    check(space_parens(")") == " ) ")
   # test "should parse an empty expression as an empty list":
-  #   check(parse("()") == [[]])
+  #   check(parse("()").head.isNil)
+  #   check(parse("()").tail.isNil)
