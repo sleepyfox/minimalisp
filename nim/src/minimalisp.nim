@@ -18,11 +18,16 @@ proc `$`[Node](n: Node): string =
   of nInt: fmt"{n.num}"
   of nString: n.str
 
+# This must happen after string negotiation
 proc space_parens*(s: string): string =
   s.replace("(", " ( ").replace(")", " ) ")
 
 proc chunk(s: string): seq[string] =
-  s.splitWhitespace()
+  # TODO: this doesn't work for strings, because strings can contain whitespace
+  #       and escaped (\) double-quotes.
+
+  # Surround parens by spaces
+  s.space_parens.splitWhitespace
 
 proc tokenise(chunk: string): Node =
   Node(kind: nString, str: chunk)
@@ -38,10 +43,8 @@ proc analyse(tokens: seq[Node]): List =
          tail: analyse(tokens[1 .. ^1]))
 
 proc parse*(s: string): List =
-  # Surround parens by spaces
-  let spaced_string = space_parens(s)
   # Split input string into chunks
-  let chunks = chunk(spaced_string)
+  let chunks = chunk(s)
   # Turn chunks into tokens
   let tokens = chunks.map(tokenise)
   # Turn list of tokens into an AST
