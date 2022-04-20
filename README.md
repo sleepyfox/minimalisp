@@ -55,6 +55,68 @@ expression = empty-list | non-empty-expression
 empty-list = "(", ")";
 non-empty-expression = "(", [whitespace], atom | expression, {whitespace, atom | expression}, [whitespace], ")";
 
+## The string problem
+
+In LISP, a program is a string. Atoms and expressions are delimited by whitespace.
+Strings are delimited by double-quotes, _but may contain whitespace_. This means that there are two 'modes' of input parsing for a LISP lexxer, that of parsing 'normal' input, and parsing a string. For example, the program:
+
+    The cat sat (on the) mat
+
+is parsed as the list:
+
+    ['The', 'cat', 'sat', ['on', 'the'], 'mat']
+
+but the program:
+
+    Spot went "bark bark"
+
+is parsed as the list:
+
+    ['Spot', 'went', 'bark bark']
+
+but, crucially, not:
+
+    ['Spot', 'went', '"bark', 'bark"']
+
+This form of dual-mode parsing means a more complicated solution than just doing String.splitWhitespace in order to turn the input program into tokens.
+
+One solution would be to parse character by character, and create a sequence as we go by using a Finite State Automata. This writes 'tokens' (actually just string slices, more proto-tokens) to a list by dividing the input stream into:
+
+a) string literals delimited by double-quotes;
+b) open parens;
+c) close-parens;
+b) other tokens delimited by whitespace.
+
+### State machine diagram
+
+```mermaid
+flowchart TD
+    A((start)) --> B(read char)
+    B -- whitespace --> B
+    B -- character --> C(token literal)
+    C -- whitespace --> G(write token)
+    C -- character --> C
+    B -- double-quote --> D[string literal]
+    D -- backslash --> E[escape]
+    E -- character --> D
+    D -- character --> D
+    D -- whitespace --> D
+    D -- double-quote --> F(write string)
+    F --> B
+    B -- open-paren --> H(write-open-paren)
+    H --> B
+    B -- close-paren --> I(write-close-paren)
+    I --> B
+```
+
+### State transition table
+
+| First Header  | Second Header |
+| ------------- | ------------- |
+| Content Cell  | Content Cell  |
+| Content Cell  | Content Cell  |
+
+
 # License
 
 CC-BY-NC-SA 4.0 - see [LICENSE](./LICENSE) file.
