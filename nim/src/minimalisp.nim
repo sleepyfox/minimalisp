@@ -22,7 +22,7 @@ proc `$`[Node](n: Node): string =
 proc space_parens*(s: string): string =
   s.replace("(", " ( ").replace(")", " ) ")
 
-proc chunk(s: string): seq[string] =
+proc chunk*(s: string): seq[string] =
   # TODO: this doesn't work for strings, because strings can contain whitespace
   #       and escaped (\) double-quotes.
 
