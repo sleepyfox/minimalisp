@@ -23,11 +23,18 @@ proc space_parens*(s: string): string =
   s.replace("(", " ( ").replace(")", " ) ")
 
 proc chunk*(s: string): seq[string] =
-  # TODO: this doesn't work for strings, because strings can contain whitespace
-  #       and escaped (\) double-quotes.
-
-  # Surround parens by spaces
-  s.space_parens.splitWhitespace
+  var
+    chunks: seq[string]
+    acc = ""
+  for c in s:
+    if c == ' ':
+      chunks.add(acc)
+      acc = ""
+    else:
+      acc.add(c)
+  if acc.len > 0: # deal with a trailing token
+    chunks.add(acc)
+  chunks
 
 proc tokenise(chunk: string): Node =
   Node(kind: nString, str: chunk)
