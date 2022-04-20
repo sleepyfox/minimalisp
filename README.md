@@ -14,6 +14,7 @@ Nevertheless, LISP can be a suitably simple and manageable target language for a
 
 Implementations are in language-focussed folders:
 
+* [Nim](nim)
 * [Node.js](nodejs)
 
 # Specification
