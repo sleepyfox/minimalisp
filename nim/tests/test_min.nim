@@ -30,3 +30,5 @@ suite "A chunker":
     check(chunk("cat").len == 1)
   test "should recognise two tokens separated by whitespace":
     check(chunk("My cat").len == 2)
+  test "should extract a string literal delimited by double-quotes":
+    check(chunk("""My cat "Spot"""").len == 3)
