@@ -22,19 +22,56 @@ proc `$`[Node](n: Node): string =
 proc space_parens*(s: string): string =
   s.replace("(", " ( ").replace(")", " ) ")
 
+const stt =
+  [[1,2],
+   [3,4]]
+
+# | input \ state | waiting   | string   | token    | escape | start-exp  | end-exp    |
+# | ------------- | --------- | -------- | -------- | ------ | ---------- | ---------- |
+# | whitespace    | waiting   | string   | waiting! | string | waiting!   | waiting!   |
+# | double-quote  | string    | waiting! | token    | string | string!    | error      |
+# | character     | token     | string   | token    | string | token!     | error      |
+
+# | backslash     | error     | escape   | error?   | string | error      | error      |
+# | open-paren    | start-exp | string   | token    | string | start-exp! | start-exp! |
+# | close-paren   | close-exp | string   | token    | string | end-exp!   | end-exp!   |
+
 proc chunk*(s: string): seq[string] =
   var
-    chunks: seq[string]
     acc = ""
+    state = "waiting"
   for c in s:
-    if c == ' ':
-      chunks.add(acc)
-      acc = ""
-    else:
-      acc.add(c)
+    case state
+    of "waiting":
+      case c
+      of ' ', '\n', '\t':
+        discard
+      of '"':
+        state = "string"
+        acc.add(c)
+      else:
+        state = "token"
+        acc.add(c)
+    of "string":
+      case c
+      of '"':
+        acc.add(c)
+        result.add(acc)
+        acc = ""
+        state = "waiting"
+      else:
+        acc.add(c)
+    of "token":
+      case c
+      of ' ', '\n', '\t':
+        result.add(acc)
+        acc = ""
+        state = "waiting"
+      else:
+        acc.add(c)
+
   if acc.len > 0: # deal with a trailing token
-    chunks.add(acc)
-  chunks
+    result.add(acc)
 
 proc tokenise(chunk: string): Node =
   Node(kind: nString, str: chunk)
