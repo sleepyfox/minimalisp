@@ -92,7 +92,7 @@ b) other tokens delimited by whitespace.
 
 ```mermaid
 flowchart TD
-    A((start)) --> B(read char)
+    A((start)) --> B(waiting)
     B -- whitespace --> B
     B -- character --> C(token literal)
     C -- whitespace --> G(write token)
@@ -112,11 +112,16 @@ flowchart TD
 
 ### State transition table
 
-| First Header  | Second Header |
-| ------------- | ------------- |
-| Content Cell  | Content Cell  |
-| Content Cell  | Content Cell  |
+| input \ state | waiting   | string   | token    | escape | start-exp  | end-exp    |
+| ------------- | --------- | -------- | -------- | ------ | ---------- | ---------- |
+| whitespace    | waiting   | string   | waiting! | string | waiting!   | waiting!   |
+| double-quote  | stringlit | waiting! | token    | string | string!    | error      |
+| backslash     | error     | escape   | error?   | string | error      | error      |
+| character     | tokenlit  | string   | token    | string | token!     | error      |
+| open-paren    | start-exp | string   | token    | string | start-exp! | start-exp! |
+| close-paren   | close-exp | string   | token    | string | end-exp!   | end-exp!   |
 
+An exclamation mark indicates the writing of a token to the output stream.
 
 # License
 
