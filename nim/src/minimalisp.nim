@@ -46,6 +46,8 @@ proc chunk*(s: string): seq[string] =
       case c
       of ' ', '\n', '\t':
         discard
+      of '(':
+        result.add("(")
       of '"':
         state = "string"
         acc.add(c)
