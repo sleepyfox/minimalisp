@@ -11,8 +11,10 @@ suite "A chunker":
   test "should extract a string literal delimited by double-quotes":
     check(chunk("""My cat "Spot"""").len == 3)
     check(chunk("""My cat "Spot"""")[2] == "\"Spot\"")
-  # test "should cope with string literals with spaces":
-  #   check(chunk("""Spot went "Meow meow!"""").len == 3)
+  test "should cope with string literals with spaces":
+    check(chunk("""Spot went "Meow meow!"""").len == 3)
+  test "should include escaped quotes in a string":
+    check(chunk("""a "b\"c" d""")[1] == """"b"c"""")
 
 suite "A minimalisp parser":
   test "should parse the empty string as an empty list":

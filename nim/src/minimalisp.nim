@@ -59,8 +59,13 @@ proc chunk*(s: string): seq[string] =
         result.add(acc)
         acc = ""
         state = "waiting"
+      of '\\':
+        state = "escape"
       else:
         acc.add(c)
+    of "escape":
+      acc.add(c)
+      state = "string"
     of "token":
       case c
       of ' ', '\n', '\t':
