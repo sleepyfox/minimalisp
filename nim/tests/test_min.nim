@@ -30,6 +30,12 @@ suite "A tokeniser":
   test "when given an arbitrary string should return a token node":
     check(tokenise("cat").kind == nToken)
     check(tokenise("cat").token == "cat")
+  test "when given a string literal should return a string node":
+    check(tokenise(""""meow"""").kind == nString)
+    check(tokenise(""""meow"""").str == "meow")
+  test "when given an empty string literal should return an empty string node":
+    check(tokenise("\"\"").kind == nString)
+    check(tokenise("\"\"").str == "")
 
 
 suite "A minimalisp parser":

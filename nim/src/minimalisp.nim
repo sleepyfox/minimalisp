@@ -88,7 +88,7 @@ proc chunk*(s: string): seq[string] =
 
 proc tokenise*(chunk: string): Node =
   if chunk[0] == '"':
-    Node(kind: nString, str: chunk[1 .. ^1])
+    Node(kind: nString, str: chunk[1 .. ^2])
   else:
     Node(kind: nToken, token: chunk)
   # TODO: create other kinds of tokens e.g. ints, symbols etc.
