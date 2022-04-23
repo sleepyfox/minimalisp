@@ -7,11 +7,12 @@ type
   List* = ref object
     head*: Node
     tail*: List
-  NodeKind* = enum nInt, nString
+  NodeKind* = enum nInt, nString, nToken
   Node* = ref object
     case kind*: NodeKind
     of nInt: num*: int
     of nString: str*: string
+    of nToken: token*: string
 
 proc `$`[Node](n: Node): string =
   case n.kind
@@ -31,7 +32,6 @@ const stt =
 # | whitespace    | waiting   | string   | waiting! | string | waiting!   | waiting!   |
 # | double-quote  | string    | waiting! | token    | string | string!    | error      |
 # | character     | token     | string   | token    | string | token!     | error      |
-
 # | backslash     | error     | escape   | error?   | string | error      | error      |
 # | open-paren    | start-exp | string   | token    | string | start-exp! | start-exp! |
 # | close-paren   | close-exp | string   | token    | string | end-exp!   | end-exp!   |
@@ -86,8 +86,11 @@ proc chunk*(s: string): seq[string] =
   if acc.len > 0: # deal with a trailing token
     result.add(acc)
 
-proc tokenise(chunk: string): Node =
-  Node(kind: nString, str: chunk)
+proc tokenise*(chunk: string): Node =
+  if chunk[0] == '"':
+    Node(kind: nString, str: chunk[1 .. ^1])
+  else:
+    Node(kind: nToken, token: chunk)
   # TODO: create other kinds of tokens e.g. ints, symbols etc.
 
 proc analyse(tokens: seq[Node]): List =

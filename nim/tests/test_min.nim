@@ -26,6 +26,12 @@ suite "A chunker":
     check(chunk("a)b").len == 3)
 
 
+suite "A tokeniser":
+  test "when given an arbitrary string should return a token node":
+    check(tokenise("cat").kind == nToken)
+    check(tokenise("cat").token == "cat")
+
+
 suite "A minimalisp parser":
   test "should parse the empty string as an empty list":
     check(parse("").head.isNil)
@@ -33,16 +39,12 @@ suite "A minimalisp parser":
 
   test "should parse a string with one atom as a list with one atom":
     check(parse("a").tail.isNil)
-    check(parse("a").head.str == "a")
+    check(parse("a").head.token == "a")
 
   test "should parse 'a b' as a list of two atoms":
-    check(parse("a b").head.str == "a")
-    check(parse("a b").tail.head.str == "b")
+    check(parse("a b").head.token == "a")
+    check(parse("a b").tail.head.token == "b")
     check(parse("a b").tail.tail.isNil)
-
-  test "parens should be surrounded by spaces":
-    check(space_parens("(") == " ( ")
-    check(space_parens(")") == " ) ")
 
   # test "should parse an empty expression as an empty list":
   #   check(parse("()").head.isNil)
