@@ -20,6 +20,10 @@ suite "A chunker":
   test "an open paren in a string should not be an expression":
     check(chunk("""a "b (c" d""").len == 3)
     check(chunk("""a "b (c" d""")[1] == """"b (c"""")
+  test "a close paren should be a seperate chunk":
+    check(chunk("()").len == 2)
+  test "a close paren should end a token":
+    check(chunk("a)b").len == 3)
 
 
 suite "A minimalisp parser":

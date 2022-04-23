@@ -48,6 +48,8 @@ proc chunk*(s: string): seq[string] =
         discard
       of '(':
         result.add("(")
+      of ')':
+        result.add(")")
       of '"':
         state = "string"
         acc.add(c)
@@ -73,6 +75,10 @@ proc chunk*(s: string): seq[string] =
       of ' ', '\n', '\t':
         result.add(acc)
         acc = ""
+        state = "waiting"
+      of ')':
+        result.add(acc)
+        result.add(")")
         state = "waiting"
       else:
         acc.add(c)
