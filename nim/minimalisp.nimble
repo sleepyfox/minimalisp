@@ -5,8 +5,6 @@ author        = "@sleepyfox"
 description   = "A minimal LISP interpreter"
 license       = "CC-BY-NC-SA-4.0"
 srcDir        = "src"
-bin           = @["nim"]
-
 
 # Dependencies
 
