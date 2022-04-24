@@ -37,6 +37,8 @@ const stt =
 # | close-paren   | close-exp | string   | token    | string | end-exp!   | end-exp!   |
 
 proc chunk*(s: string): seq[string] =
+  # This is fairly straighforward, if wordy, code.
+  # TODO: refactor to something nicer.
   var
     acc = ""
     state = "waiting"
