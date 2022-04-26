@@ -41,6 +41,22 @@ suite "A tokeniser":
   test "when given a ) returns an close-expression node":
     check(tokenise(")").kind == nClose)
 
+
+suite "An analyser":
+  test "when given an empty node list should return an empty tree":
+    check(analyse(@[]).head.isNil)
+    check(analyse(@[]).tail.isNil)
+  test "when given a single Node should return a List with one item":
+    check(analyse(@[tokenise("cat")]).head.kind == nToken)
+    check(analyse(@[tokenise("cat")]).head.token == "cat")
+  test "when given two Nodes should return a list of two items":
+    let result = analyse(@[tokenise("cat"), tokenise("spot")])
+    check(result.head.kind == nToken)
+    check(result.head.token == "cat")
+    check(result.tail.head.kind == nToken)
+    check(result.tail.head.token == "spot")
+
+
 suite "A minimalisp parser":
   test "should parse the empty string as an empty list":
     check(parse("").head.isNil)

@@ -20,6 +20,9 @@ proc `$`[Node](n: Node): string =
   case n.kind
   of nInt: fmt"{n.num}"
   of nString: n.str
+  of nToken: n.token
+  of nOpen: "("
+  of nClose: ")"
 
 # This must happen after string negotiation
 proc space_parens*(s: string): string =
@@ -102,7 +105,7 @@ proc tokenise*(chunk: string): Node =
     Node(kind: nToken, token: chunk)
   # TODO: create other kinds of tokens e.g. ints, symbols etc.
 
-proc analyse(tokens: seq[Node]): List =
+proc analyse*(tokens: seq[Node]): List =
   if tokens.len == 0:
     List(head: nil, tail: nil)
   elif tokens.len == 1:
