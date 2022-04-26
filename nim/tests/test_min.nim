@@ -36,7 +36,10 @@ suite "A tokeniser":
   test "when given an empty string literal should return an empty string node":
     check(tokenise("\"\"").kind == nString)
     check(tokenise("\"\"").str == "")
-
+  test "when given a ( returns an open-expression node":
+    check(tokenise("(").kind == nOpen)
+  test "when given a ) returns an close-expression node":
+    check(tokenise(")").kind == nClose)
 
 suite "A minimalisp parser":
   test "should parse the empty string as an empty list":
