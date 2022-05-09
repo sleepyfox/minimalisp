@@ -7,7 +7,7 @@ type
   List* = ref object
     head*: Node
     tail*: List
-  NodeKind* = enum nInt, nString, nToken, nOpen, nClose
+  NodeKind* = enum nInt, nString, nToken, nOpen, nClose, nList
   Node* = ref object
     case kind*: NodeKind
     of nInt: num*: int
@@ -15,14 +15,16 @@ type
     of nToken: token*: string
     of nOpen: discard
     of nClose: discard
+    of nList: tree*: List
 
-proc `$`[Node](n: Node): string =
+proc `$`*[Node](n: Node): string =
   case n.kind
   of nInt: fmt"{n.num}"
   of nString: n.str
   of nToken: n.token
   of nOpen: "("
   of nClose: ")"
+  of nList: $n.tree
 
 # This must happen after string negotiation
 proc space_parens*(s: string): string =
@@ -105,14 +107,23 @@ proc tokenise*(chunk: string): Node =
     Node(kind: nToken, token: chunk)
   # TODO: create other kinds of tokens e.g. ints, symbols etc.
 
+# Currently this just creates a flat list
+# it needs to create a tree
 proc analyse*(tokens: seq[Node]): List =
-  if tokens.len == 0:
-    List(head: nil, tail: nil)
-  elif tokens.len == 1:
-    List(head: tokens[0], tail: nil)
-  else:
-    List(head: tokens[0],
-         tail: analyse(tokens[1 .. ^1]))
+  var list = new(List)
+  var listp = list
+  var lastp: List
+
+  for node in tokens:
+    listp.head = node
+    listp.tail = new(List)
+    lastp = listp
+    listp = listp.tail
+
+  if tokens.len > 0:
+     lastp.tail = nil # remove trailing new(List)
+  list
+
 
 proc parse*(s: string): List =
   # Split input string into chunks

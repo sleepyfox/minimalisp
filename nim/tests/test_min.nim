@@ -56,10 +56,19 @@ suite "An analyser":
     check(result.head.token == "cat")
     check(result.tail.head.kind == nToken)
     check(result.tail.head.token == "spot")
-  test "when given an empty expression should return opening and closing tokens":
-    let result = analyse(@[tokenise("("), tokenise(")")])
-    check(result.head.kind == nOpen)
-    check(result.tail.head.kind == nClose)
+  # test "when given an empty expression should return an empty tree":
+  #   let result = analyse(@[tokenise("("), tokenise(")")])
+  #   # result should be head -> List -> nil
+  #   check(result.head.kind == nList)
+  #   check(result.head.tree.head.isNil)
+  #   check(result.head.tree.tail.isNil)
+  #   check(result.tail.isNil)
+  # test "when given a subexpression returns a tree":
+  #   let result = analyse(@[tokenise("8"),
+  #                          tokenise("("),
+  #                          tokenise("1"),
+  #                          tokenise(")")])
+  #   echo $result.head
 
 
 suite "A minimalisp parser":
@@ -78,7 +87,7 @@ suite "A minimalisp parser":
     check(result.tail.tail.isNil)
 
   # TODO: change this to an empty list (nil)?
-  test "should parse an empty expression as the beginning and end of a list":
-    let result = parse("()")
-    check(result.head.kind == nOpen)
-    check(result.tail.head.kind == nClose)
+  # test "should parse an empty expression as the beginning and end of a list":
+  #   let result = parse("()")
+  #   check(result.head.kind == nOpen)
+  #   check(result.tail.head.kind == nClose)
