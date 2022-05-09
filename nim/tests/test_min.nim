@@ -1,6 +1,7 @@
 import unittest
 import minimalisp
 
+# string -> chunks: string[]
 suite "A chunker":
   test "should turn an empty input string into an empty seq":
     check(chunk("").len == 0)
@@ -25,7 +26,7 @@ suite "A chunker":
   test "a close paren should end a token":
     check(chunk("a)b").len == 3)
 
-
+# chunk: string -> Token
 suite "A tokeniser":
   test "when given an arbitrary string should return a token node":
     check(tokenise("cat").kind == nToken)
@@ -41,7 +42,7 @@ suite "A tokeniser":
   test "when given a ) returns an close-expression node":
     check(tokenise(")").kind == nClose)
 
-
+# Token[] -> tree: List
 suite "An analyser":
   test "when given an empty node list should return an empty tree":
     check(analyse(@[]).head.isNil)
@@ -55,6 +56,10 @@ suite "An analyser":
     check(result.head.token == "cat")
     check(result.tail.head.kind == nToken)
     check(result.tail.head.token == "spot")
+  test "when given an empty expression should return opening and closing tokens":
+    let result = analyse(@[tokenise("("), tokenise(")")])
+    check(result.head.kind == nOpen)
+    check(result.tail.head.kind == nClose)
 
 
 suite "A minimalisp parser":
@@ -67,10 +72,13 @@ suite "A minimalisp parser":
     check(parse("a").head.token == "a")
 
   test "should parse 'a b' as a list of two atoms":
-    check(parse("a b").head.token == "a")
-    check(parse("a b").tail.head.token == "b")
-    check(parse("a b").tail.tail.isNil)
+    let result = parse("a b")
+    check(result.head.token == "a")
+    check(result.tail.head.token == "b")
+    check(result.tail.tail.isNil)
 
-  # test "should parse an empty expression as an empty list":
-  #   check(parse("()").head.isNil)
-  #   check(parse("()").tail.isNil)
+  # TODO: change this to an empty list (nil)?
+  test "should parse an empty expression as the beginning and end of a list":
+    let result = parse("()")
+    check(result.head.kind == nOpen)
+    check(result.tail.head.kind == nClose)
