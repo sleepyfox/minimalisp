@@ -78,13 +78,11 @@ suite "An analyser":
 suite "A minimalisp parser":
   test "should parse the empty string as an empty list":
     check(parse("").len == 0)
-
   test "should parse a string with one atom as a list with one atom":
     let result = parse("a")
     check(result.len == 1)
     check(result[0].kind == nToken)
     check(result[0].token == "a")
-
   test "should parse 'a b' as a list of two atoms":
     let result = parse("a b")
     check(result.len == 2)
@@ -92,8 +90,13 @@ suite "A minimalisp parser":
     check(result[0].token == "a")
     check(result[1].kind == nToken)
     check(result[1].token == "b")
-
   test "should parse an empty expression as the beginning and end of a list":
     let result = parse("()")
     check(result[0].kind == nList)
     check(result[0].tree.len == 0)
+  test "should parse a subexpression":
+    let result = parse("(* (+ 3 4))")
+    check(result[0].kind == nList)
+    check(result[0].tree.len == 2)
+    check($result[0].tree[0] == "*")
+    check($result[0].tree[1] == "@[+, 3, 4]")
