@@ -41,53 +41,59 @@ suite "A tokeniser":
     check(tokenise("(").kind == nOpen)
   test "when given a ) returns an close-expression node":
     check(tokenise(")").kind == nClose)
+  test "when given a positive integer returns an integer node":
+    check(tokenise("8").kind == nInt)
+    check(tokenise("8").num == 8)
+  test "when given a negative integer returns an integer node":
+    check(tokenise("-1").kind == nInt)
+    check(tokenise("-1").num == -1)
 
 # Token[] -> tree: List
 suite "An analyser":
   test "when given an empty node list should return an empty tree":
-    check(analyse(@[]).head.isNil)
-    check(analyse(@[]).tail.isNil)
+    check(analyse(@[]).len == 0)
   test "when given a single Node should return a List with one item":
-    check(analyse(@[tokenise("cat")]).head.kind == nToken)
-    check(analyse(@[tokenise("cat")]).head.token == "cat")
+    check(analyse(@[tokenise("cat")])[0].kind == nToken)
+    check(analyse(@[tokenise("cat")])[0].token == "cat")
   test "when given two Nodes should return a list of two items":
     let result = analyse(@[tokenise("cat"), tokenise("spot")])
-    check(result.head.kind == nToken)
-    check(result.head.token == "cat")
-    check(result.tail.head.kind == nToken)
-    check(result.tail.head.token == "spot")
-  # test "when given an empty expression should return an empty tree":
-  #   let result = analyse(@[tokenise("("), tokenise(")")])
-  #   # result should be head -> List -> nil
-  #   check(result.head.kind == nList)
-  #   check(result.head.tree.head.isNil)
-  #   check(result.head.tree.tail.isNil)
-  #   check(result.tail.isNil)
-  # test "when given a subexpression returns a tree":
-  #   let result = analyse(@[tokenise("8"),
-  #                          tokenise("("),
-  #                          tokenise("1"),
-  #                          tokenise(")")])
-  #   echo $result.head
-
+    check(result[0].kind == nToken)
+    check(result[0].token == "cat")
+    check(result[1].kind == nToken)
+    check(result[1].token == "spot")
+  test "when given an empty expression should return an empty tree":
+    let result = analyse(@[tokenise("("), tokenise(")")])
+    # result should be @[List -> empty node]
+    check(result[0].kind == nList)
+    check(result[0].tree.len == 0)
+  test "when given a subexpression returns a tree":
+    let result = analyse(@[tokenise("8"),
+                           tokenise("("),
+                           tokenise("1"),
+                           tokenise(")")])
+    check(result.len == 2)
+    check(result[0].kind == nInt)
+    check(result[0].num == 8)
 
 suite "A minimalisp parser":
   test "should parse the empty string as an empty list":
-    check(parse("").head.isNil)
-    check(parse("").tail.isNil)
+    check(parse("").len == 0)
 
   test "should parse a string with one atom as a list with one atom":
-    check(parse("a").tail.isNil)
-    check(parse("a").head.token == "a")
+    let result = parse("a")
+    check(result.len == 1)
+    check(result[0].kind == nToken)
+    check(result[0].token == "a")
 
   test "should parse 'a b' as a list of two atoms":
     let result = parse("a b")
-    check(result.head.token == "a")
-    check(result.tail.head.token == "b")
-    check(result.tail.tail.isNil)
+    check(result.len == 2)
+    check(result[0].kind == nToken)
+    check(result[0].token == "a")
+    check(result[1].kind == nToken)
+    check(result[1].token == "b")
 
-  # TODO: change this to an empty list (nil)?
-  # test "should parse an empty expression as the beginning and end of a list":
-  #   let result = parse("()")
-  #   check(result.head.kind == nOpen)
-  #   check(result.tail.head.kind == nClose)
+  test "should parse an empty expression as the beginning and end of a list":
+    let result = parse("()")
+    check(result[0].kind == nList)
+    check(result[0].tree.len == 0)

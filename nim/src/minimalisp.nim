@@ -4,9 +4,7 @@ import strformat
 import sequtils
 
 type
-  List* = ref object
-    head*: Node
-    tail*: List
+  List* = seq[Node]
   NodeKind* = enum nInt, nString, nToken, nOpen, nClose, nList
   Node* = ref object
     case kind*: NodeKind
@@ -26,14 +24,6 @@ proc `$`*[Node](n: Node): string =
   of nClose: ")"
   of nList: $n.tree
 
-# This must happen after string negotiation
-proc space_parens*(s: string): string =
-  s.replace("(", " ( ").replace(")", " ) ")
-
-const stt =
-  [[1,2],
-   [3,4]]
-
 # | input \ state | waiting   | string   | token    | escape | start-exp  | end-exp    |
 # | ------------- | --------- | -------- | -------- | ------ | ---------- | ---------- |
 # | whitespace    | waiting   | string   | waiting! | string | waiting!   | waiting!   |
@@ -43,6 +33,8 @@ const stt =
 # | open-paren    | start-exp | string   | token    | string | start-exp! | start-exp! |
 # | close-paren   | close-exp | string   | token    | string | end-exp!   | end-exp!   |
 
+# Take a string and divide it up into lexical chunks
+# TODO: can probably merge this with tokenise
 proc chunk*(s: string): seq[string] =
   # This is fairly straighforward, if wordy, code.
   # TODO: refactor to something nicer.
@@ -95,6 +87,7 @@ proc chunk*(s: string): seq[string] =
   if acc.len > 0: # deal with a trailing token
     result.add(acc)
 
+# Take a string chunk and turn it into a Node
 proc tokenise*(chunk: string): Node =
   case chunk[0]
   of '"':
@@ -103,28 +96,51 @@ proc tokenise*(chunk: string): Node =
     Node(kind: nOpen)
   of ')':
     Node(kind: nClose)
+  of '0' .. '9':
+    Node(kind: nInt, num: chunk.parseInt)
+  of '-':
+    # TODO: edge cases
+    if chunk.len > 1 and chunk[1] in '0' .. '9':
+      Node(kind: nInt, num: chunk.parseInt)
+    else:
+      Node(kind: nToken, token: chunk)
   else:
     Node(kind: nToken, token: chunk)
-  # TODO: create other kinds of tokens e.g. ints, symbols etc.
+  # TODO: create other kinds of tokens e.g. floats, symbols etc.
 
-# Currently this just creates a flat list
-# it needs to create a tree
-proc analyse*(tokens: seq[Node]): List =
-  var list = new(List)
-  var listp = list
-  var lastp: List
+# Take an array of Nodes and produce a tree
+proc analyse*(ss: seq[Node]): List =
+  # already have implicit result = nil
+  type Mode = enum mParse, mSkip
 
-  for node in tokens:
-    listp.head = node
-    listp.tail = new(List)
-    lastp = listp
-    listp = listp.tail
+  var
+    mode = mParse
+    nested = 0
 
-  if tokens.len > 0:
-     lastp.tail = nil # remove trailing new(List)
-  list
+  for i, node in ss:
+    case mode
+    of mSkip:
+      case node.kind
+      of nOpen:
+        nested += 1
+      of nClose:
+        nested -= 1
+        if nested <= 0:
+          mode = mParse
+      else:
+        discard
+    of mParse:
+      case node.kind
+      of nOpen: # add a new tree node with full expression
+        result.add Node(kind: nList, tree: analyse(ss[(i + 1) .. ^1]))
+        mode = mSkip
+        nested = 1
+      of nClose:
+        return result
+      else:
+        result.add node
 
-
+# Stitch all the pieces of the parsing process together
 proc parse*(s: string): List =
   # Split input string into chunks
   let chunks = chunk(s)
