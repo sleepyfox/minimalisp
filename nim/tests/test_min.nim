@@ -1,6 +1,20 @@
 import unittest
 import minimalisp
 
+suite "A Node type":
+  let result = Node(kind: nString, str: "cat")
+  test "should create a string node":
+    check(result.kind == nString)
+    check(result.str == "cat")
+  test "should convert to a string":
+    check($result == "cat")
+  test "should be able to compare two nodes":
+    let
+      result2 = Node(kind: nString, str: "cat")
+      result3 = Node(kind: nInt, num: 1)
+    check(equals(result, result2))
+    check(not equals(result, result3))
+
 # string -> chunks: string[]
 suite "A chunker":
   test "should turn an empty input string into an empty seq":
@@ -94,9 +108,26 @@ suite "A minimalisp parser":
     let result = parse("()")
     check(result[0].kind == nList)
     check(result[0].tree.len == 0)
+  test "should parse an expression":
+    let result = parse("(/ 1 2)")
+    check(result[0].kind == nList)
+    check(result[0].tree.len == 3)
+    check(result[0].tree[0].kind == nToken)
+    check(result[0].tree[0].token == "/")
+    check(result[0].tree[1].kind == nInt)
+    check(result[0].tree[1].num == 1)
+    check(result[0].tree[2].kind == nInt)
+    check(result[0].tree[2].num == 2)
+    check($result[0].tree == "@[/, 1, 2]")
   test "should parse a subexpression":
     let result = parse("(* (+ 3 4))")
     check(result[0].kind == nList)
     check(result[0].tree.len == 2)
     check($result[0].tree[0] == "*")
     check($result[0].tree[1] == "@[+, 3, 4]")
+  test "should parse multiply nested subexpressions":
+    let result = parse("(+ (* 3 (/ 1 2) 7) 1 (- 5 2))")
+    check(result[0].kind == nList)
+    check(result[0].tree.len == 4)
+    check($result[0].tree[0] == "+")
+#    check($result[0].tree[1] == "@[*, 3, parse("(/ 1 2)"), 7]")

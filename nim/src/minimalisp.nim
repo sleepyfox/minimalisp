@@ -24,6 +24,16 @@ proc `$`*[Node](n: Node): string =
   of nClose: ")"
   of nList: $n.tree
 
+proc equals*[Node](a, b: Node): bool =
+  case a.kind
+  of nInt: a.kind == b.kind and a.num == b.num
+  of nString: a.kind == b.kind and a.str == b.str
+  of nToken: a.kind == b.kind and a.token == b.token
+  of nOpen: a.kind == b.kind
+  of nClose: a.kind == b.kind
+  of nList: a.kind == b.kind and a.tree == b.tree
+
+
 # | input \ state | waiting   | string   | token    | escape | start-exp  | end-exp    |
 # | ------------- | --------- | -------- | -------- | ------ | ---------- | ---------- |
 # | whitespace    | waiting   | string   | waiting! | string | waiting!   | waiting!   |
